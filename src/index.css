@@ -1,0 +1,102 @@
+html {
+  /* If this is placed on the body while the body also has a height applied
+  then the browser window won't scroll */
+  overflow-x: hidden;
+  
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+/* .topContainer {
+  
+}  */
+
+.left-clip {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 100%);
+}
+
+.right-clip {
+  clip-path: polygon(0% 0%, 0% 0%, 100% 100%, 0% 100%);
+}
+
+.header {
+  color: #f2f2f2;
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+}
+
+
+.runaBackground {
+  height: 150vh;
+  width: 100vw;
+  margin: 0;
+  /* This was margin bottom before -3.52 */
+  margin-bottom: -120px;
+  fill: rgba(62,7,14,1);
+}
+
+.runaContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9001;
+  height: 100%;
+  width: 100%;
+}
+
+.image {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  height: 40rem;
+  width: 40rem;
+}
+
+.leftDiv {
+  height: 10rem;
+  width: 10rem;
+  background: #222;
+}
+
+.rightDiv {
+  justify-self: center;
+  align-self: center;
+  height: 100%;
+  width: 300px;
+  background: #f2f2f2;
+  transform: skew(-52deg)  
+}
+
+
+@media screen and (min-width: 740px) {
+  .rightDiv {
+    width: 460px;
+    /* transform: skew(-56deg) */
+  }
+}
+
+@media screen and (min-width: 1020px) {
+  .rightDiv {
+    width: 760px;
+    /* transform: skew(-60deg) */
+  }
+}
+
+/* .container::before {
+  content: '';
+  height: 45rem;
+  width: 45rem;
+  background: #f2f2f2;
+  transform: skew(-60deg)
+} */
