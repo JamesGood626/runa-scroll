@@ -2,10 +2,10 @@ html {
   /* If this is placed on the body while the body also has a height applied
   then the browser window won't scroll */
   overflow-x: hidden;
-  
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -32,16 +32,16 @@ html, body {
   transform: rotate(180deg);
 }
 
-
 .runaBackground {
-  height: 150vh;
+  height: auto;
   width: 100vw;
   margin: 0;
   /* This was margin bottom before -3.52 */
   margin-bottom: -120px;
-  fill: rgba(62,7,14,1);
+  fill: rgba(62, 7, 14, 1);
 }
 
+/* max-width: 500px the lines need to be smaller */
 .runaContainer {
   position: fixed;
   top: 0;
@@ -75,9 +75,8 @@ html, body {
   height: 100%;
   width: 300px;
   background: #f2f2f2;
-  transform: skew(-52deg)  
+  transform: skew(-52deg);
 }
-
 
 @media screen and (min-width: 740px) {
   .rightDiv {
