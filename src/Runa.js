@@ -40,9 +40,7 @@ class Runa extends Component {
     super(props);
 
     this.state = {
-      scrollHeightLap: 0,
-      rotationCount: 1,
-      scrollRotateLap: 1,
+      scrollHeightLevel: 0,
       prevRotateIndex: 1,
       rotateIndex: 1,
       runaArr: [
@@ -75,101 +73,137 @@ class Runa extends Component {
     window.addEventListener("scroll", this.onScroll);
   };
 
-  renderRuna = () => {
-    // Arr will be cycled through as component's state (or redux)
-    // is incremented 0 through 18 and back to 0 again which will be triggered
-    // by scrolling up and down (in which case scrolling up decrements)
-    return this.state.runaArr[this.state.rotateIndex - 1];
-  };
-
-  onScroll = event => {
-    const { scrollHeightLap, rotationCount, rotateIndex } = this.state;
+  getScrollIncrement = runaArr => {
     const totalAmountOfPossibleScroll =
       document.documentElement.scrollHeight - window.innerHeight;
-    const scrollY = window.scrollY;
-    // console.log("THE DOCUMENT ELEMENT HEIGHT: ", window.innerHeight);
-    // THIS WORKS MUCH BETTER THAN MY PREVIOUS APPROACH.
-    // Just need to add some scroll dampening and debouncing to achieve da magic.
-    const scrollIncrement =
-      totalAmountOfPossibleScroll /
-      this.state.runaArr.length /
-      this.state.runaArr.length;
-    const scrollIncrementActual = scrollIncrement * 6;
-    const fullRotation = scrollIncrementActual * this.state.runaArr.length;
-    console.log("A FULL ROTATION: ", fullRotation);
-    // console.log(totalAmountOfPossibleScroll);
-    // console.log(
-    //   "DIVIDED AMOUNT: ",
-    //   totalAmountOfPossibleScroll / this.state.runaArr.length
-    // );
-    //console.log("TTOTAL SCROLL: ", totalAmountOfPossibleScroll);
-    //console.log("THE SCROLL INCREMENT: ", scrollIncrement);
-    // const viewportHeightStart =
-    //   scrollHeightLap === 0 ? 0 : window.innerHeight * scrollHeightLap;
-    // const viewportHeightEnd =
-    //   scrollHeightLap === 0
-    //     ? window.innerHeight
-    //     : window.innerHeight * scrollHeightLap + window.innerHeight;
-    const lowEndRange =
-      scrollHeightLap === 0
-        ? rotateIndex * scrollIncrementActual - scrollIncrementActual
-        : rotateIndex * scrollIncrementActual -
-          scrollIncrementActual +
-          scrollHeightLap * fullRotation;
-    const highEndRange =
-      scrollHeightLap === 0
-        ? rotateIndex * scrollIncrementActual
-        : rotateIndex * scrollIncrementActual + scrollHeightLap * fullRotation;
-    console.log("THE LOW END RANGE: ", lowEndRange);
-    console.log("THE SCROLL Y: ", scrollY);
-    console.log("THE HIGH END RANGE: ", highEndRange);
-    //console.log("THE SCROLL HEIGHT LAP: ", scrollHeightLap);
-    //console.log("THE VIEWPORT HEIGHT START: ", viewportHeightStart);
-    //console.log("THE VIEWPORT HEIGHT END: ", viewportHeightEnd);
-    console.log("the rotationCount: ", rotationCount);
-    console.log("The scroll height lap: ", scrollHeightLap);
+    let scrollIncrement =
+      totalAmountOfPossibleScroll / runaArr.length / runaArr.length;
+    scrollIncrement = scrollIncrement * 6; // adjust the multiplier based on the clientHeight.
+    return scrollIncrement;
+  };
+
+  getLowEndRange = (
+    rotateIndex,
+    scrollHeightLevel,
+    fullRotation,
+    scrollIncrement
+  ) => {
+    const lowEndRangeCalculation =
+      rotateIndex * scrollIncrement - scrollIncrement;
+    return scrollHeightLevel === 0
+      ? lowEndRangeCalculation
+      : lowEndRangeCalculation + scrollHeightLevel * fullRotation;
+  };
+
+  getHighEndRange = (
+    rotateIndex,
+    scrollHeightLevel,
+    fullRotation,
+    scrollIncrement
+  ) => {
+    const highEndRangeCalculation = rotateIndex * scrollIncrement;
+    return scrollHeightLevel === 0
+      ? highEndRangeCalculation
+      : highEndRangeCalculation + scrollHeightLevel * fullRotation;
+  };
+
+  setDefaultScrollRotationIndex = scrollY => {
+    this.setState((prevState, state) => ({
+      prevScrollPosition: scrollY,
+      prevRotateIndex: prevState.rotateIndex,
+      rotateIndex: 1
+    }));
+  };
+
+  setDecrementRotationCountAndScrollHeightLevel = () => {
+    this.setState((prevState, state) => ({
+      rotateIndex: 19,
+      scrollHeightLevel: prevState.scrollHeightLevel - 1,
+      rotationCount: prevState.rotationCount - 1
+    }));
+  };
+
+  setDecrementRotateIndex = () => {
+    this.setState((prevState, state) => ({
+      rotateIndex: prevState.rotateIndex - 1
+    }));
+  };
+
+  setIncrementRotationCountAndScrollHeightLevel = () => {
+    this.setState((prevState, state) => ({
+      rotateIndex: 1,
+      scrollHeightLevel: prevState.scrollHeightLevel + 1,
+      rotationCount: prevState.rotationCount + 1
+    }));
+  };
+
+  setIncrementRotateIndex = () => {
+    this.setState((prevState, state) => ({
+      rotateIndex: prevState.rotateIndex + 1
+    }));
+  };
+
+  switchOverIncrementOrDecrementsetStateOptions = (
+    scrollY,
+    lowEndRange,
+    highEndRange,
+    rotateIndex
+  ) => {
     if (scrollY === 0) {
-      this.setState((prevState, state) => ({
-        prevScrollPosition: scrollY,
-        prevRotateIndex: prevState.rotateIndex,
-        rotateIndex: 1
-      }));
+      this.setDefaultScrollRotationIndex(scrollY);
     }
     if (lowEndRange < scrollY && scrollY < highEndRange) {
       return;
     } else if (lowEndRange > scrollY) {
-      console.log("THIS IS GETTING CALLED TOO");
       if (rotateIndex - 1 === 0) {
-        console.log("setting state back to 19");
-        this.setState((prevState, state) => ({
-          rotateIndex: 19,
-          scrollHeightLap: prevState.scrollHeightLap - 1,
-          rotationCount: prevState.rotationCount - 1
-        }));
+        // rotateIndex set to 19
+        this.setDecrementRotationCountAndScrollHeightLevel();
       } else {
-        console.log("this is making it zero");
-        this.setState((prevState, state) => ({
-          rotateIndex: prevState.rotateIndex - 1
-        }));
+        this.setDecrementRotateIndex();
       }
     } else if (scrollY > highEndRange) {
       if (rotateIndex + 1 === 20) {
-        console.log("setting state back to 1");
-        this.setState((prevState, state) => ({
-          rotateIndex: 1,
-          scrollHeightLap: prevState.scrollHeightLap + 1,
-          rotationCount: prevState.rotationCount + 1
-        }));
+        // rotateIndex set to 1
+        this.setIncrementRotationCountAndScrollHeightLevel();
       } else {
-        this.setState((prevState, state) => ({
-          rotateIndex: prevState.rotateIndex + 1
-        }));
+        this.setIncrementRotateIndex();
       }
     }
   };
 
+  onScroll = event => {
+    const { scrollHeightLevel, rotateIndex, runaArr } = this.state;
+    const scrollY = window.scrollY;
+    const scrollIncrement = this.getScrollIncrement(runaArr);
+    const fullRotation = scrollIncrement * runaArr.length;
+    const lowEndRange = this.getLowEndRange(
+      rotateIndex,
+      scrollHeightLevel,
+      fullRotation,
+      scrollIncrement
+    );
+    const highEndRange = this.getHighEndRange(
+      rotateIndex,
+      scrollHeightLevel,
+      fullRotation,
+      scrollIncrement
+    );
+    // console.log("THE LOW END RANGE: ", lowEndRange);
+    // console.log("THE SCROLL Y: ", scrollY);
+    // console.log("THE HIGH END RANGE: ", highEndRange);
+    this.switchOverIncrementOrDecrementsetStateOptions(
+      scrollY,
+      lowEndRange,
+      highEndRange,
+      rotateIndex
+    );
+  };
+
+  renderRuna = () => {
+    return this.state.runaArr[this.state.rotateIndex - 1];
+  };
+
   render() {
-    console.log("ROTATE INDEX", this.state.rotateIndex);
     return (
       <div className="runaContainer">
         <img src={this.renderRuna()} className="image" />

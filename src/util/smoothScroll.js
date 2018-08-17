@@ -1,5 +1,5 @@
 export const SmoothScroll = (target, speed, smooth) => {
-  if (target == document)
+  if (target === document)
     target =
       document.documentElement || document.body.parentNode || document.body; // cross browser support for document scrolling
   var moving = false;
