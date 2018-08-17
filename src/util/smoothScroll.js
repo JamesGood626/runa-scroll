@@ -1,7 +1,28 @@
+import bowser from "bowser";
+
 export const SmoothScroll = (target, speed, smooth) => {
-  if (target === document)
-    target =
-      document.documentElement || document.body.parentNode || document.body; // cross browser support for document scrolling
+  // SmoothScroll works in chrome and firefox with both document.documentElement and document.body.parentNode
+  // the above two don't work in safari
+  // SmoothScroll works in safari with document.body
+  // document.body doesn't allow SmoothScroll in chrome and firefox
+  // In all cases where it doesn't work, there's no scrolling at all.
+  const browser = bowser
+    .getParser(navigator.userAgent)
+    .getBrowserName()
+    .toLowerCase();
+  console.log("BROWSER: ", browser);
+  if (target === document) {
+    if (browser === "chrome" || browser === "firefox") {
+      target = document.documentElement || document.body.parentNode;
+    } else if (browser === "safari") {
+      target = document.body;
+    } else {
+      // Have yet to test this on IE....
+      target =
+        document.documentElement || document.body.parentNode || document.body; // cross browser support for document scrolling
+    }
+  }
+  console.log("THIS IS THE TARGET: ", target);
   var moving = false;
   var pos = target.scrollTop;
   target.addEventListener("mousewheel", scrolled, false);
